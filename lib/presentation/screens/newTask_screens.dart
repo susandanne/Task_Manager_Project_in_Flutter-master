@@ -52,18 +52,25 @@ class _NewTaskState extends State<NewTask> {
                            _listTaskByStatusNew();
               },
               child: ListView.builder(itemCount:liststautusnew.dataNewStatus?.length?? 0,itemBuilder: (context,index){
-                return TaskCardDetails(taskitem:liststautusnew.dataNewStatus![index],ondelete:
-                (){_delete(liststautusnew.dataNewStatus![index].sId!);
-                },ondedit:(){
-                  _updateDataState(liststautusnew.dataNewStatus![index].sId!);
-                } );
+                return TaskCardDetails(taskitem:liststautusnew.dataNewStatus![index],refreshItem: (){
+                  _taskCountDataLoading();
+                  _listTaskByStatusNew();
+                },
+
+                 );
+
               }),
-            ))
-          ],
+            )
+            )],
         ) ,
       ),
-      floatingActionButton: FloatingActionButton(onPressed: () {
-        Navigator.push(context, MaterialPageRoute(builder: (context)=>AddNewTaskCreated()));
+      floatingActionButton: FloatingActionButton(onPressed: () async{
+
+      final result=await Navigator.push(context, MaterialPageRoute(builder: (context)=>AddNewTaskCreated()));
+      if(result!=null && result==true){
+        _taskCountDataLoading();
+        _listTaskByStatusNew();
+      }
       },
         backgroundColor: AppColor.ThemeColor,
       child: Icon(Icons.add,color: Colors.pink,),),
@@ -123,61 +130,6 @@ class _NewTaskState extends State<NewTask> {
        }
      }
 
-  }
-  Future<void>_delete(String id)async{
-
-   final response= await NetworkCaller.GetRequest(Url.deleteTask(id));
-
-
-   if(response.Issuccess){
-     _listTaskByStatusNew();
-     _taskCountDataLoading();
-   }
-
-   else{
-
-            if(mounted){ ShowSnackBarMessage(context, response.errormessage ?? 'failed in new task status');
-            }
-   }
-  }
-  Future<void> _updateTaskStatus(String id,String status)async{
-     final response=await NetworkCaller.GetRequest(Url.updateTaskStatus(id, status));
-     if(response.Issuccess){
-       _taskCountDataLoading();
-       _listTaskByStatusNew();
-     }
-     else{
-     if(mounted){
-       ShowSnackBarMessage(context, 'not updated status');
-     }
-     }
-  }
-  void _updateDataState(String id){
-   showDialog(context: context, builder:(context){
-     return AlertDialog(
-       title: Text('select status'),
-       content: Column(
-         mainAxisSize: MainAxisSize.min,
-         children: [
-           ListTile(title: Text('new'),trailing:Icon(Icons.check),),
-           ListTile(title: Text('completed'),onTap: (){
-             _updateTaskStatus(id,'completed');
-             Navigator.pop(context);
-           },),
-           ListTile(title: Text('progress'),onTap: (){
-             _updateTaskStatus(id, 'progress');
-             Navigator.pop(context);
-           },),
-           ListTile(title: Text('cancel'),onTap: (){
-             _updateTaskStatus(id,'cancel');
-             Navigator.pop(context);
-           },),
-
-         ],
-       ),
-     );
-   }
-   );
   }
 }
 

@@ -5,6 +5,8 @@ import 'package:task_manager_project_in_flutter/data/user_data_login_part.dart';
 
 class AuthController {
    static String? accessToken;
+   static UserData? userdata;
+
    static Future<void> saveUserData(UserData userdata) async {
       SharedPreferences sharedPreferences = await SharedPreferences
           .getInstance();
@@ -20,7 +22,9 @@ class AuthController {
       if (resultAuth == null) {
          return null;
       }
-      return UserData.fromJson(jsonDecode(resultAuth));
+      final user=UserData.fromJson(jsonDecode(resultAuth));
+      AuthController.userdata=user;
+      return user;
    }
 
    static Future<void> saveUserToken(String token) async {

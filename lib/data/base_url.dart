@@ -5,6 +5,7 @@ class Url{
    static String createTask='$baseurl/createTask';
    static String taskStatusCount='$baseurl/taskStatusCount';
    static String listTaskByStatusNew='$baseurl/listTaskByStatus/New';
+   static String listTaskByStatusCompleted='$baseurl/listTaskByStatus/Completed';
    static String deleteTask(String id)=>'$baseurl/deleteTask/$id';
    static String updateTaskStatus(String id,String status)=>'$baseurl/updateTaskStatus/$id/$status';
 }

@@ -1,4 +1,7 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:task_manager_project_in_flutter/data/auth_controller.dart';
 import 'package:task_manager_project_in_flutter/presentation/widgets/backGroundWidget.dart';
 import 'package:task_manager_project_in_flutter/presentation/widgets/profileLogoAppBarWidget.dart';
 
@@ -18,6 +21,16 @@ class _UpdataDtataState extends State<UpdataDtata> {
   final TextEditingController _phone = TextEditingController();
   final TextEditingController _password = TextEditingController();
   final GlobalKey<FormState> _key = GlobalKey<FormState>();
+  XFile? pickedImage;
+  @override
+  void initState() {
+    super.initState();
+    _email.text=AuthController.userdata?.email ?? '';
+    _lastname.text=AuthController.userdata?.lastName ?? '';
+    _fastName.text=AuthController.userdata?.firstName ?? '';
+    _phone.text=AuthController.userdata?.mobile ?? '';
+  }
+
   @override
   Widget build(BuildContext context) {
     return  Scaffold(
@@ -31,26 +44,10 @@ class _UpdataDtataState extends State<UpdataDtata> {
               child: Column(
                 children: [Text('update your data'),
                   SizedBox(height: 8,),
-                  Container(
-                    // color: Colors.pink,
-                    decoration: BoxDecoration(
-                      color: Colors.pink,
-                      borderRadius: BorderRadius.circular(5),
-                    ),
-                    child:Row(
-                      children: [
-                        Container(
-                          color: Colors.amber,
-                          padding: EdgeInsets.all(10),
-                          child: Text('Image'),
-                        ),
-                        SizedBox(width: 16,),
-                        Text('Photo.png',style: TextStyle(color: Colors.white),),
-                      ],
-                    ) ,
-                  ),
+                  Imagecontainer(),
                   SizedBox(height: 8,),
               TextFormField(controller: _email,
+                enabled: false,
                 keyboardType:TextInputType.emailAddress,
                 decoration: InputDecoration(
                     hintText: 'email'
@@ -98,6 +95,33 @@ class _UpdataDtataState extends State<UpdataDtata> {
       ),
     );
   }
+
+  Widget Imagecontainer() {
+    return GestureDetector(
+      onTap: (){
+        imagePicker();
+      },
+      child: Container(
+                    // color: Colors.pink,
+                    decoration: BoxDecoration(
+                      color: Colors.pink,
+                      borderRadius: BorderRadius.circular(5),
+                    ),
+                    child:Row(
+                      children: [
+                        Container(
+                          color: Colors.amber,
+                          padding: EdgeInsets.all(10),
+                          child: Text('Image'),
+                        ),
+                        SizedBox(width: 16,),
+                        Expanded(child: Text(pickedImage?.name ?? '',maxLines:1,
+                          style: TextStyle(color: Colors.white,overflow: TextOverflow.ellipsis),)),
+                      ],
+                    ) ,
+                  ),
+    );
+  }
   @override
   void dispose() {
     _fastName.dispose();
@@ -106,5 +130,13 @@ class _UpdataDtataState extends State<UpdataDtata> {
     _phone.dispose();
     _password.dispose();
     super.dispose();
+  }
+ Future <void> imagePicker()async{
+    ImagePicker imagePicker =ImagePicker();
+    // pickedImage= await imagePicker.pickImage(source: ImageSource.gallery);
+    pickedImage= await imagePicker.pickImage(source: ImageSource.camera);
+    setState(() {
+
+    });
   }
 }

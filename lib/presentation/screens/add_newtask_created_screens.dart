@@ -21,60 +21,67 @@ class _AddNewTaskCreatedState extends State<AddNewTaskCreated> {
       TextEditingController();
   final GlobalKey<FormState> _key = GlobalKey<FormState>();
   bool addnewTaskInProgress=false;
+  bool shouldrefreshTaskList=false;
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: profileAppBar,
-      body: backGroundWidget(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Form(
-              key: _key,
-              child: Column(
-                children: [
-                  Text('Add  new task please'),
-                  SizedBox(
-                    height: 8,
-                  ),
-                  TextFormField(
-                    controller: _textEditingControllertitle,
-                    validator: (String? value) {
-                      if (value?.trim().isEmpty ?? true) {
-                        return 'enter title plz';
-                      }
-                      return null;
-                    },
-                    decoration: InputDecoration(hintText: 'title'),
-                  ),
-                  SizedBox(
-                    height: 8,
-                  ),
-                  TextFormField(
-                    controller: _textEditingControllerdescription,
-                    maxLines: 3,
-                    validator: (String? value) {
-                      if (value?.trim().isEmpty ?? true) {
-                        return 'enter description  plz';
-                      }
-                      return null;
-                    },
-                    decoration: InputDecoration(hintText: 'description'),
-                  ),
-                  Visibility(visible:addnewTaskInProgress==false,
-                    replacement:Center(child:CircularProgressIndicator()),
-                    child: ElevatedButton(
-                        onPressed: () {
-                          if(_key.currentState!.validate()){
-                            addNewTaskCreated();
-                            Navigator.pop(context);
-                          }
-              
-                        },
-                        child: Text('add new task',style: TextStyle(color: Colors.black),)),
-                  )
-                ],
+    return PopScope(
+      canPop: false,
+      onPopInvoked:(_){
+        Navigator.pop(context,shouldrefreshTaskList);
+      } ,
+      child: Scaffold(
+        appBar: profileAppBar,
+        body: backGroundWidget(
+          child: SingleChildScrollView(
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Form(
+                key: _key,
+                child: Column(
+                  children: [
+                    Text('Add  new task please'),
+                    SizedBox(
+                      height: 8,
+                    ),
+                    TextFormField(
+                      controller: _textEditingControllertitle,
+                      validator: (String? value) {
+                        if (value?.trim().isEmpty ?? true) {
+                          return 'enter title plz';
+                        }
+                        return null;
+                      },
+                      decoration: InputDecoration(hintText: 'title'),
+                    ),
+                    SizedBox(
+                      height: 8,
+                    ),
+                    TextFormField(
+                      controller: _textEditingControllerdescription,
+                      maxLines: 3,
+                      validator: (String? value) {
+                        if (value?.trim().isEmpty ?? true) {
+                          return 'enter description  plz';
+                        }
+                        return null;
+                      },
+                      decoration: InputDecoration(hintText: 'description'),
+                    ),
+                    Visibility(visible:addnewTaskInProgress==false,
+                      replacement:Center(child:CircularProgressIndicator()),
+                      child: ElevatedButton(
+                          onPressed: () {
+                            if(_key.currentState!.validate()){
+                              addNewTaskCreated();
+                              Navigator.pop(context);
+                            }
+                
+                          },
+                          child: Text('add new task',style: TextStyle(color: Colors.black),)),
+                    )
+                  ],
+                ),
               ),
             ),
           ),
