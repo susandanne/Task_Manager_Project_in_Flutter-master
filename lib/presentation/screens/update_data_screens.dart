@@ -1,9 +1,18 @@
-import 'package:flutter/cupertino.dart';
+import 'dart:convert';
+import 'dart:io';
+
+
+
 import 'package:flutter/material.dart';
+
 import 'package:image_picker/image_picker.dart';
 import 'package:task_manager_project_in_flutter/data/auth_controller.dart';
+import 'package:task_manager_project_in_flutter/data/base_url.dart';
+import 'package:task_manager_project_in_flutter/data/network_caller.dart';
+import 'package:task_manager_project_in_flutter/data/user_data_login_part.dart';
 import 'package:task_manager_project_in_flutter/presentation/widgets/backGroundWidget.dart';
 import 'package:task_manager_project_in_flutter/presentation/widgets/profileLogoAppBarWidget.dart';
+import 'package:task_manager_project_in_flutter/presentation/widgets/show_snackbar.dart';
 
 class UpdataDtata extends StatefulWidget {
   const UpdataDtata({super.key});
@@ -22,6 +31,7 @@ class _UpdataDtataState extends State<UpdataDtata> {
   final TextEditingController _password = TextEditingController();
   final GlobalKey<FormState> _key = GlobalKey<FormState>();
   XFile? pickedImage;
+  bool updateProfileInprogress=false;
   @override
   void initState() {
     super.initState();
@@ -84,7 +94,13 @@ class _UpdataDtataState extends State<UpdataDtata> {
                   ),
                   SizedBox(height: 8,),
 
-                  ElevatedButton(onPressed: (){}, child:Text('update your data') )
+                  Visibility(
+                    visible:updateProfileInprogress==false,
+                    replacement:Center(child: CircularProgressIndicator()),
+                    child: ElevatedButton(onPressed: (){
+                      updateProfileData();
+                    }, child:Text('update your data') ),
+                  )
 
 
                 ],
@@ -138,5 +154,54 @@ class _UpdataDtataState extends State<UpdataDtata> {
     setState(() {
 
     });
+  }
+  Future <void> updateProfileData()async {
+    String? photo;
+    updateProfileInprogress = true;
+    setState(() {
+
+    });
+    Map<String, dynamic> inputUpdateParams = {
+      "email": _email.text,
+      "firstName": _fastName.text.trim(),
+      "lastName": _lastname.text.trim(),
+      "mobile": _phone.text.trim()
+      // "password": "1234",
+      // "photo": ""
+    };
+    if (_password.text.isNotEmpty) {
+      inputUpdateParams['password'] = _password.text;
+    }
+    if (pickedImage != null) {
+      List<int>bytes = File(pickedImage!.path).readAsBytesSync();
+      photo = base64Encode(bytes);
+      inputUpdateParams['photo'] = photo;
+    }
+    final response = await NetworkCaller.GetPost(
+        Url.profileUpdate, inputUpdateParams);
+    updateProfileInprogress = false;
+    if (response.Issuccess) {
+      if (response.responsebody['success'] == true) {
+        UserData userData = UserData(
+            email: _email.text,
+            firstName: _fastName.text.trim(),
+            lastName: _lastname.text.trim(),
+            mobile: _phone.text.trim(),
+            photo: photo
+        );
+        AuthController.saveUserData(userData);
+        setState(() {
+
+        });
+
+        if (!mounted) {
+          return;
+        }
+        setState(() {
+
+        });
+        ShowSnackBarMessage(context, 'update data failed ');
+      }
+    }
   }
 }

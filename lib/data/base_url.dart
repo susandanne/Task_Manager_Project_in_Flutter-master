@@ -3,6 +3,7 @@ class Url{
    static String registrationUrl='$baseurl/registration';
    static String login='$baseurl/login';
    static String createTask='$baseurl/createTask';
+   static String profileUpdate='$baseurl/profileUpdate';
    static String taskStatusCount='$baseurl/taskStatusCount';
    static String listTaskByStatusNew='$baseurl/listTaskByStatus/New';
    static String listTaskByStatusCompleted='$baseurl/listTaskByStatus/Completed';

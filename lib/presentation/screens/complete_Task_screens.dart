@@ -54,6 +54,7 @@ class _NewTaskState extends State<Complete> {
     final response=await NetworkCaller.GetRequest(Url.listTaskByStatusCompleted);
     if(response.Issuccess){
       liststautusCompleted=liststatutusNew.fromJson(response.responsebody) ;
+      print('hello completed');
 
 
     }else{
